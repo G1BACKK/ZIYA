@@ -251,16 +251,20 @@
       transform: translateZ(10px);
     }
 
-    .channel-name {
-      font-size: 1.8em;
-      font-weight: 800;
-      margin: 10px 0;
-      background: linear-gradient(to right, #ff8a00, #ff2d55);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 15px rgba(255, 0, 100, 0.7);
-      transform: translateZ(15px);
-    }
+.channel-name {
+  font-size: 1.8em;
+  font-weight: 800;
+  margin: 10px 0;
+  color: #ff69b4;
+  text-shadow: 0 0 10px #ff69b4;
+  transform: translateZ(15px);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { text-shadow: 0 0 10px #ff69b4, 0 0 20px rgba(255,105,180,0.5); }
+  50% { text-shadow: 0 0 20px #ff69b4, 0 0 40px rgba(255,105,180,0.8); }
+}
 
     .button {
       margin-top: 25px;
