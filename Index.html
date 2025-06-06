@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZIYA SURESHOT - Premium Lottery Predictions</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow: hidden;
+      text-align: center;
+      position: relative;
+      background: linear-gradient(135deg, #1a0033 0%, #0a0012 100%);
+      perspective: 1000px;
+    }
+
+    /* SMS Notification */
+    .sms-notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 350px;
+      background: #f0f0f0;
+      color: #333;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 100;
+      animation: smsSlideIn 1s forwards, smsFadeOut 1s 5s forwards;
+      font-family: Arial, sans-serif;
+      border-left: 5px solid #4CAF50;
+    }
+
+    @keyframes smsSlideIn {
+      from { top: -100px; opacity: 0; }
+      to { top: 20px; opacity: 1; }
+    }
+
+    @keyframes smsFadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    .sms-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .sms-body {
+      font-size: 14px;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .sms-amount {
+      color: #4CAF50;
+      font-weight: bold;
+    }
+
+    .sms-footer {
+      font-size: 11px;
+      color: #ff4444;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    .lottery-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    /* 3D Ball Styles */
+    .wingo-ball {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      opacity: 0;
+      box-shadow: 
+        0 0 15px currentColor,
+        0 5px 20px rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 22px;
+      font-family: 'Arial Black', sans-serif;
+      transform-style: preserve-3d;
+      will-change: transform, top;
+      animation: ballAppear 0.5s forwards;
+      z-index: 5;
+    }
+
+    @keyframes ballAppear {
+      to { opacity: 1; }
+    }
+
+    /* Advanced 3D Paint Effects */
+    .paint-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .paint-splatter {
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0;
+      z-index: 10;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+      mix-blend-mode: multiply;
+      transform-style: preserve-3d;
+      animation: splatterAppear 0.8s cubic-bezier(0.2, 0.8, 0.4, 1.5) forwards;
+    }
+
+    @keyframes splatterAppear {
+      0% { transform: scale(0.1) translateZ(0) rotateZ(0deg); opacity: 0; }
+      50% { transform: scale(1.1) translateZ(20px) rotateZ(5deg); opacity: 0.9; }
+      100% { transform: scale(1) translateZ(0) rotateZ(0deg); opacity: 0.85; }
+    }
+
+    .paint-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(1px);
+      opacity: 0.9;
+      transform-style: preserve-3d;
+      animation: 
+        blobAppear 0.5s ease-out forwards,
+        blobPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes blobAppear {
+      from { transform: scale(0) translateZ(0); opacity: 0; }
+      to { transform: scale(1) translateZ(0); opacity: 0.9; }
+    }
+
+    @keyframes blobPulse {
+      0%, 100% { transform: scale(1) translateZ(0); }
+      50% { transform: scale(1.05) translateZ(5px); }
+    }
+
+    .paint-drip {
+      position: absolute;
+      border-radius: 50% 50% 0 0;
+      opacity: 0;
+      transform-origin: top center;
+      animation: 
+        dripFall 3s cubic-bezier(0.65, 0, 0.35, 1) forwards,
+        dripFade 3s ease-out forwards;
+    }
+
+    @keyframes dripFall {
+      0% { transform: scaleY(0) translateZ(0); height: 0; }
+      30% { transform: scaleY(0.8) translateZ(5px); height: 20px; }
+      100% { transform: scaleY(1) translateZ(0); height: 80px; }
+    }
+
+    @keyframes dripFade {
+      0%, 70% { opacity: 0.8; }
+      100% { opacity: 0; }
+    }
+
+    .win-amount {
+      position: absolute;
+      font-weight: bold;
+      font-size: 24px;
+      opacity: 0;
+      text-shadow: 0 0 15px currentColor;
+      z-index: 20;
+      animation: winFloat 4s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+      color: #00ff00 !important; /* Force green color */
+    }
+
+    @keyframes winFloat {
+      0% {
+        transform: translateY(0) scale(0.8) translateZ(0);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+        transform: scale(1.2) translateZ(20px);
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-150px) scale(1.5) translateZ(50px);
+        opacity: 0;
+      }
+    }
+
+    /* Main Content Styles */
+    .content {
+      z-index: 10;
+      padding: 30px;
+      background: rgba(20, 5, 40, 0.85);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+      max-width: 90%;
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 105, 180, 0.4);
+      margin: 20px;
+      transform-style: preserve-3d;
+      transform: translateZ(20px);
+    }
+
+    .logo-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #ff69b4;
+      box-shadow: 0 0 30px #ff69b4, 0 0 60px rgba(255, 105, 180, 0.5);
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+      transform: translateZ(30px);
+    }
+
+    h1 {
+      font-size: 2.2em;
+      margin: 20px 0 15px;
+      background: linear-gradient(to right, #ff69b4, #ff1493, #ff0080);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(255, 105, 180, 0.7);
+      letter-spacing: 1px;
+      transform: translateZ(10px);
+    }
+
+    .channel-name {
+      font-size: 1.8em;
+      font-weight: 800;
+      margin: 10px 0;
+      background: linear-gradient(to right, #ff8a00, #ff2d55);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px rgba(255, 0, 100, 0.7);
+      transform: translateZ(15px);
+    }
+
+    .button {
+      margin-top: 25px;
+      padding: 16px 40px;
+      font-size: 1.3em;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(to right, #ff2d55, #ff0080);
+      border: none;
+      border-radius: 50px;
+      box-shadow: 0 0 30px #ff2d55;
+      cursor: pointer;
+      animation: pulse 1.5s infinite ease-in-out;
+      text-decoration: none;
+      transition: all 0.3s;
+      transform: translateZ(20px);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1) translateZ(20px); box-shadow: 0 0 20px #ff2d55; }
+      50% { transform: scale(1.05) translateZ(25px); box-shadow: 0 0 40px #ff2d55; }
+    }
+
+    .sub {
+      font-size: 1.1em;
+      color: #eee;
+      margin-top: 15px;
+      transform: translateZ(10px);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      font-size: 0.9em;
+      opacity: 0.7;
+      z-index: 10;
+      transform: translateZ(5px);
+    }
+    
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #1a0033;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease;
+      transform-style: preserve-3d;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 105, 180, 0.3);
+      border-radius: 50%;
+      border-top-color: #ff69b4;
+      animation: spin 1s ease-in-out infinite;
+      transform: translateZ(50px);
+    }
+    
+    @keyframes spin {
+      to { transform: translateZ(50px) rotate(360deg); }
+    }
+
+    /* Paint texture patterns */
+    .paint-texture {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 20%),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,0.1) 0%, transparent 20%);
+      background-size: 100px 100px;
+      mix-blend-mode: overlay;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="preloader" id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="sms-notification">
+    <div class="sms-header">
+      <span>ICICI Bank</span>
+      <span>10:42 AM</span>
+    </div>
+    <div class="sms-body">
+      Your A/C XXXX6847 has been credited with <span class="sms-amount">₹8,530.00</span> on 02-05-2025 via IMPS (Ref No: 762863838901).
+    </div>
+    <div class="sms-footer">
+      If this transaction was not done by you, please call 1860 419 5555 immediately.
+    </div>
+  </div>
+
+  <div class="lottery-background" id="lotteryBg"></div>
+  <div class="paint-container" id="paintContainer"></div>
+  
+  <div class="content">
+    <img src="https://i.ibb.co/355qcYX8/IMG-6299.jpg" alt="ZIYA SURESHOT" class="logo-img">
+    <div class="channel-name">ZIYA SURESHOT 🥰</div>
+    <h1>💸 DAILY WINNING NUMBERS</h1>
+    <a href="tg://join?invite=yanMwI6iw3hjNDll" class="button" id="telegramButton">JOIN NOW</a>
+    <div class="sub">Get premium lottery predictions daily!</div>
+  </div>
+
+  <footer>&copy; 2024 ZIYA SURESHOT</footer>
+
+  <script>
+    // Preloader removal
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('preloader').style.opacity = '0';
+        setTimeout(function() {
+          document.getElementById('preloader').style.display = 'none';
+        }, 500);
+      }, 300);
+    });
+
+    // Enhanced 3D paint physics with paint spread across entire screen
+    function createWingoBalls() {
+      const bg = document.getElementById('lotteryBg');
+      const paintContainer = document.getElementById('paintContainer');
+      const colors = {
+        '0': {bg: '#8B0000', burst: '#8B0000', text: '#00ff00'}, // Dark Red
+        '1': {bg: '#006400', burst: '#006400', text: '#00ff00'}, // Dark Green
+        '2': {bg: '#4B0082', burst: '#4B0082', text: '#00ff00'}, // Indigo
+        '3': {bg: '#800080', burst: '#800080', text: '#00ff00'}, // Purple
+        '4': {bg: '#8B4513', burst: '#8B4513', text: '#00ff00'}, // Saddle Brown
+        '5': {bg: 'linear-gradient(90deg, #006400 0%, #006400 50%, #8B0000 50%, #8B0000 100%)', burst: '#4B0082', text: '#00ff00'},
+        '6': {bg: '#000080', burst: '#000080', text: '#00ff00'}, // Navy
+        '7': {bg: '#008080', burst: '#008080', text: '#00ff00'}, // Teal
+        '8': {bg: '#8B008B', burst: '#8B008B', text: '#00ff00'}, // Dark Magenta
+        '9': {bg: '#556B2F', burst: '#556B2F', text: '#00ff00'}  // Dark Olive Green
+      };
+      
+      // Create floating balls with physics
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+          const ball = document.createElement('div');
+          ball.className = 'wingo-ball';
+          
+          const left = 10 + Math.random() * 80;
+          const number = Math.floor(Math.random() * 10).toString();
+          
+          ball.style.left = `${left}vw`;
+          ball.style.top = `-50px`;
+          ball.style.background = colors[number].bg;
+          ball.style.color = '#fff';
+          ball.style.textShadow = '0 0 5px rgba(0,0,0,0.8)';
+          ball.textContent = number;
+          
+          // Add physics-based falling animation
+          const duration = 2 + Math.random() * 2;
+          ball.style.transition = `top ${duration}s cubic-bezier(0.3, 0.7, 0.4, 1)`;
+          
+          bg.appendChild(ball);
+          
+          // Trigger fall after DOM update
+          setTimeout(() => {
+            // Random impact position across the screen
+            const impactX = 10 + Math.random() * 80; // Random position across screen width
+            const impactY = 20 + Math.random() * 60; // Random position across screen height
+            ball.style.top = `${impactY}vh`;
+            ball.style.left = `${impactX}vw`;
+            
+            // Create paint splatter effect when ball impacts
+            setTimeout(() => {
+              // Create main splatter (big and persistent)
+              const mainSplatter = document.createElement('div');
+              mainSplatter.className = 'paint-splatter';
+              
+              const size = 120 + Math.random() * 80;
+              mainSplatter.style.width = `${size}px`;
+              mainSplatter.style.height = `${size}px`;
+              mainSplatter.style.left = `${impactX}vw`;
+              mainSplatter.style.top = `${impactY}vh`;
+              mainSplatter.style.transform = `translate(-50%, -50%)`;
+              mainSplatter.style.background = colors[number].burst;
+              mainSplatter.style.borderRadius = createOrganicShape();
+              
+              // Add texture
+              const texture = document.createElement('div');
+              texture.className = 'paint-texture';
+              mainSplatter.appendChild(texture);
+              
+              paintContainer.appendChild(mainSplatter);
+              
+              // Create secondary splatters (smaller) around the main impact
+              const splatterCount = 3 + Math.floor(Math.random() * 4);
+              for (let j = 0; j < splatterCount; j++) {
+                setTimeout(() => {
+                  const splatter = document.createElement('div');
+                  splatter.className = 'paint-splatter';
+                  
+                  const offsetX = (Math.random() * 200 - 100);
+                  const offsetY = (Math.random() * 200 - 100);
+                  const size = 40 + Math.random() * 60;
+                  
+                  splatter.style.width = `${size}px`;
+                  splatter.style.height = `${size}px`;
+                  splatter.style.left = `calc(${impactX}vw + ${offsetX}px)`;
+                  splatter.style.top = `calc(${impactY}vh + ${offsetY}px)`;
+                  splatter.style.transform = `translate(-50%, -50%)`;
+                  splatter.style.background = colors[number].burst;
+                  splatter.style.borderRadius = createOrganicShape();
+                  splatter.style.opacity = '0.7';
+                  
+                  paintContainer.appendChild(splatter);
+                }, j * 200);
+              }
+              
+              // Create paint blobs (3D looking) scattered around
+              const blobCount = 4 + Math.floor(Math.random() * 4);
+              for (let j = 0; j < blobCount; j++) {
+                setTimeout(() => {
+                  const blob = document.createElement('div');
+                  blob.className = 'paint-blob';
+                  
+                  const size = 20 + Math.random() * 30;
+                  const offsetX = (Math.random() * 300 - 150);
+                  const offsetY = (Math.random() * 300 - 150);
+                  
+                  blob.style.width = `${size}px`;
+                  blob.style.height = `${size}px`;
+                  blob.style.left = `calc(${impactX}vw + ${offsetX}px)`;
+                  blob.style.top = `calc(${impactY}vh + ${offsetY}px)`;
+                  blob.style.transform = `translate(-50%, -50%)`;
+                  blob.style.background = colors[number].burst;
+                  blob.style.boxShadow = `0 0 10px ${colors[number].burst}`;
+                  
+                  paintContainer.appendChild(blob);
+                }, j * 300);
+              }
+              
+              // Create dripping paint from impact point
+              const dripCount = 2 + Math.floor(Math.random() * 3);
+              for (let j = 0; j < dripCount; j++) {
+                setTimeout(() => {
+                  const drip = document.createElement('div');
+                  drip.className = 'paint-drip';
+                  
+                  const width = 5 + Math.random() * 8;
+                  const offsetX = (Math.random() * 50 - 25);
+                  
+                  drip.style.width = `${width}px`;
+                  drip.style.left = `calc(${impactX}vw + ${offsetX}px)`;
+                  drip.style.top = `${impactY}vh`;
+                  drip.style.transform = `translateX(-50%)`;
+                  drip.style.background = colors[number].burst;
+                  drip.style.boxShadow = `0 0 5px ${colors[number].burst}`;
+                  drip.style.animationDelay = `${j * 0.3}s, ${j * 0.3}s`;
+                  
+                  paintContainer.appendChild(drip);
+                  
+                  // Remove drip after animation
+                  setTimeout(() => {
+                    drip.remove();
+                  }, 3000);
+                }, j * 300);
+              }
+              
+              // Create win amount with green color
+              if (Math.random() > 0.3) {
+                const winAmount = document.createElement('div');
+                winAmount.className = 'win-amount';
+                const amount = Math.floor(1000 + Math.random() * 15000);
+                winAmount.textContent = `₹${amount.toLocaleString('en-IN')} CREDITED`;
+                winAmount.style.left = `${impactX}vw`;
+                winAmount.style.top = `${impactY}vh`;
+                winAmount.style.transform = `translate(-50%, -50%)`;
+                winAmount.style.color = '#00ff00'; // Bright green
+                winAmount.style.textShadow = '0 0 15px #00ff00';
+                bg.appendChild(winAmount);
+                
+                setTimeout(() => {
+                  winAmount.remove();
+                }, 4000);
+              }
+              
+              // Remove ball after impact
+              ball.remove();
+            }, duration * 1000);
+          }, 50);
+        }, i * 800); // Stagger ball creation
+      }
+    }
+
+    // Helper function to create organic shapes
+    function createOrganicShape() {
+      const values = [];
+      for (let i = 0; i < 8; i++) {
+        values.push(30 + Math.random() * 40);
+      }
+      return `${values[0]}% ${values[1]}% ${values[2]}% ${values[3]}% / ${values[4]}% ${values[5]}% ${values[6]}% ${values[7]}%`;
+    }
+
+    // Telegram redirect
+    function openTelegram() {
+      window.location.href = "tg://join?invite=yanMwI6iw3hjNDll";
+      setTimeout(() => {
+        window.location.href = "https://t.me/+yanMwI6iw3hjNDll";
+      }, 500);
+      return false;
+    }
+
+    // Auto-redirect after 10 seconds
+    function autoRedirect() {
+      setTimeout(function() {
+        openTelegram();
+      }, 10000);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      createWingoBalls();
+      document.getElementById('telegramButton').addEventListener('click', openTelegram);
+      autoRedirect();
+      
+      // Continuous ball generation
+      setInterval(createWingoBalls, 2000);
+      
+      // Re-show SMS every 30 seconds
+      setInterval(() => {
+        document.querySelector('.sms-notification').style.animation = 'none';
+        setTimeout(() => {
+          document.querySelector('.sms-notification').style.animation = 'smsSlideIn 1s forwards, smsFadeOut 1s 5s forwards';
+        }, 50);
+      }, 30000);
+      
+      // Add parallax effect for 3D feel
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        document.querySelector('.content').style.transform = 
+          `translateZ(20px) rotateX(${(y - 0.5) * 5}deg) rotateY(${(x - 0.5) * 5}deg)`;
+          
+        document.querySelector('.logo-img').style.transform = 
+          `translateZ(30px) rotateX(${(y - 0.5) * -3}deg) rotateY(${(x - 0.5) * -3}deg)`;
+      });
+    });
+  </script>
+</body>
+</html>
